@@ -18,12 +18,12 @@ Built by Isela Flores as a beginner-friendly cybersecurity practice project.**
 ## 🧠 How it works
 The scanner checks URLs for things like:
 
-- 🏷️ Suspicious words (login, verify, update, account)  
-- 🔒 Missing HTTPS  
-- 🧪 IP address instead of domain  
-- 🌀 `@` symbol tricks that hide the real destination  
-- 🧩 Many subdomains or dots  
-- ❌ Suspicious TLDs (.xyz, .cn, etc.)  
+-  Suspicious words (login, verify, update, account)  
+-  Missing HTTPS  
+-  IP address instead of domain  
+-  `@` symbol tricks that hide the real destination  
+-  Many subdomains or dots  
+-  Suspicious TLDs (.xyz, .cn, etc.)  
 
 Each rule adds to a score, and the score maps to:
 
@@ -33,7 +33,7 @@ Each rule adds to a score, and the score maps to:
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 - **Python (Flask)**  
 - **HTML & CSS**  
 - **Regex & URL parsing**  
