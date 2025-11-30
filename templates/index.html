@@ -1,59 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>SafeLink Scanner</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-    <div class="page">
-        <header class="header">
-            <div class="header-main">
-                <div class="logo-circle">
-                    🔒
-                </div>
-                <div>
-                    <h1>SafeLink Scanner</h1>
-                    <p class="subtitle">Quick check to see if a link looks safe or suspicious.</p>
-                </div>
+<body class="page">
+
+    <main class="card">
+        <header class="card-header">
+            <div class="icon-circle">🔒</div>
+            <div>
+                <h1>SafeLink Scanner</h1>
+                <p class="subtitle">Quick check to see if a link looks safe or suspicious.</p>
             </div>
         </header>
 
-        <main class="card">
-            <form method="POST" class="form">
-                <label for="url">Paste a URL to scan:</label>
-                <div class="form-row">
-                    <input type="text" id="url" name="url"
-                           placeholder="https://example.com/login"
-                           required>
-                    <button type="submit">Scan</button>
-                </div>
-            </form>
-
-            {% if result %}
-            <div class="result">
-                <div class="risk-row">
-                    <span class="risk-label">Risk level:</span>
-                    <span class="badge badge-{{ result.risk|lower }}">
-                        {{ result.risk }}
-                    </span>
-                </div>
-
-                <p class="score">Score: {{ result.score }}</p>
-
-                <h3>Why we flagged it:</h3>
-                <ul>
-                    {% for r in result.reasons %}
-                        <li>{{ r }}</li>
-                    {% endfor %}
-                </ul>
+        <form method="POST" class="form">
+            <label for="url" class="label">Paste a URL to scan:</label>
+            <div class="input-row">
+                <input
+                    type="text"
+                    id="url"
+                    name="url"
+                    class="input"
+                    placeholder="https://example.com/login"
+                    value="{{ url or '' }}"
+                    required
+                >
+                <button type="submit" class="button">Scan</button>
             </div>
-            {% endif %}
-        </main>
-<footer class="footer">
-    <p>Built by Isela as a cybersecurity practice project <span class="shield">🛡️</span></p>
-</footer>
+        </form>
 
+        {% if result %}
+        <section class="result">
+            <p class="risk-label">
+                Risk level:
+                <span class="badge
+                    {% if result.risk == 'Low' %}badge-low{% elif result.risk == 'Medium' %}badge-medium{% else %}badge-high{% endif %}
+                ">
+                    {{ result.risk }}
+                </span>
+            </p>
+
+            <p class="score">Score: {{ result.score }}</p>
+
+            <h3>Why we flagged it:</h3>
+            <ul>
+                {% for r in result.reasons %}
+                    <li>{{ r }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+    </main>
+
+    <footer class="footer">
+        <p>Built by Isela as a cybersecurity practice project 🛡️</p>
+    </footer>
+
+</body>
+</html>
 
         
 
