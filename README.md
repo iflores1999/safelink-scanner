@@ -1,3 +1,4 @@
+🔗 **Live demo:** https://safelink-scannex.onrender.com
 # 🛡️ SafeLink Scanner  
 
 **A simple cybersecurity tool that analyzes URLs and detects phishing signs.  
