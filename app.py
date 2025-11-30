@@ -11,15 +11,16 @@ def index():
     if request.method == "POST":
         url = request.form.get("url", "").strip()
         if url:
-            # analyze_url returns a dict with "risk", "score", "reasons"
             result = analyze_url(url)
 
-    # Pass result (or None) and the last typed url to the template
     return render_template("index.html", result=result, url=url)
 
+# Simple health check for Render
+@app.route("/health")
+def health():
+    return "OK", 200
 
+# For running locally
 if __name__ == "__main__":
-    # For local testing. On Render, gunicorn will run: app:app
     app.run(host="0.0.0.0", port=5000)
-
 
