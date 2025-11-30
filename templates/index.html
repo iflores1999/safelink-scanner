@@ -5,65 +5,180 @@
     <title>SafeLink Scanner</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body class="page">
 
     <main class="card">
+
+        <!-- Header -->
         <header class="card-header">
             <div class="icon-circle">🔒</div>
-            <div>
-                <h1>SafeLink Scanner</h1>
-                <p class="subtitle">Quick check to see if a link looks safe or suspicious.</p>
+
+            <div class="card-header-main">
+                <div>
+                    <h1>SafeLink Scanner</h1>
+
+                    <!-- Navigation (scrolls on this page) -->
+                    <nav class="nav-links">
+                        <a href="#url-tool">🔗 URL scanner</a>
+                        <a href="#password-tool">🔐 Password checker</a>
+                    </nav>
+
+                    <p class="subtitle">
+                        Quick checks to see if links and passwords look safe or suspicious.
+                    </p>
+                </div>
+
+                <!-- Theme toggle -->
+                <button type="button" id="theme-toggle" class="theme-toggle">
+                    🌙 Dark mode
+                </button>
             </div>
         </header>
 
-        <form method="POST" class="form">
-            <label for="url" class="label">Paste a URL to scan:</label>
-            <div class="input-row">
-                <input
-                    type="text"
-                    id="url"
-                    name="url"
-                    class="input"
-                    placeholder="https://example.com/login"
-                    value="{{ url or '' }}"
-                    required
-                >
-                <button type="submit" class="button">Scan</button>
-            </div>
-        </form>
+        <!-- URL Scan Section -->
+        <section id="url-tool" class="section">
+            <h2>🔗 URL scanner</h2>
 
-        {% if result %}
-        <section class="result">
-            <p class="risk-label">
-                Risk level:
-                <span class="badge
-                    {% if result.risk == 'Low' %}badge-low{% elif result.risk == 'Medium' %}badge-medium{% else %}badge-high{% endif %}
-                ">
-                    {{ result.risk }}
-                </span>
-            </p>
+            <form method="POST" class="form">
+                <label for="url" class="label">Paste a URL to scan:</label>
 
-            <p class="score">Score: {{ result.score }}</p>
+                <div class="input-row">
+                    <input
+                        type="text"
+                        id="url"
+                        name="url"
+                        class="input"
+                        placeholder="https://example.com/login"
+                        value="{{ url or '' }}"
+                        required
+                    >
+                    <button type="submit" class="button">Scan</button>
+                </div>
+            </form>
 
-            <h3>Why we flagged it:</h3>
-            <ul>
-                {% for r in result.reasons %}
-                    <li>{{ r }}</li>
-                {% endfor %}
-            </ul>
+            {% if url_result %}
+            <section class="result">
+                <p class="risk-label">
+                    Risk level:
+                    <span class="badge
+                        {% if url_result.risk == 'Low' %}badge-low
+                        {% elif url_result.risk == 'Medium' %}badge-medium
+                        {% else %}badge-high
+                        {% endif %}
+                    ">
+                        {{ url_result.risk }}
+                    </span>
+                </p>
+
+                <p class="score">Score: {{ url_result.score }}</p>
+
+                <h3>Why we flagged it:</h3>
+                <ul>
+                    {% for r in url_result.reasons %}
+                        <li>{{ r }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+            {% endif %}
         </section>
-        {% endif %}
+
+        <hr class="divider">
+
+        <!-- Password Strength Section -->
+        <section id="password-tool" class="section">
+            <h2>🔐 Password strength checker</h2>
+
+            <form method="POST" class="form">
+                <label for="password" class="label">Enter a password to check:</label>
+
+                <div class="input-row">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        class="input"
+                        placeholder="Example: H@ppyDog2024!"
+                        required
+                    >
+                    <button type="button" id="password-toggle" class="button button-ghost">
+                        👁 Show
+                    </button>
+                    <button type="submit" class="button">
+                        Check strength
+                    </button>
+                </div>
+            </form>
+
+            {% if pwd_result %}
+            <section class="result">
+                <div class="risk-row">
+                    <span class="risk-label">Strength:</span>
+
+                    {% if pwd_result.label == "Weak" %}
+                        <span class="badge badge-high">Weak</span>
+                    {% elif pwd_result.label == "Okay" %}
+                        <span class="badge badge-medium">Okay</span>
+                    {% else %}
+                        <span class="badge badge-low">Strong</span>
+                    {% endif %}
+                </div>
+
+                <p class="score">Score: {{ pwd_result.score }} / 100</p>
+
+                <h3>Details:</h3>
+                <ul>
+                    {% for r in pwd_result.reasons %}
+                        <li>{{ r }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+            {% endif %}
+        </section>
+
     </main>
 
     <footer class="footer">
         <p>Built by Isela as a cybersecurity practice project 🛡️</p>
     </footer>
 
+    <!-- Tiny JS for dark mode + show password -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const body = document.body;
+            const themeToggle = document.getElementById("theme-toggle");
+            const pwInput = document.getElementById("password");
+            const pwToggle = document.getElementById("password-toggle");
+
+            // --- Dark mode ---
+            const THEME_KEY = "safelink-theme";
+
+            function applyTheme(theme) {
+                if (theme === "dark") {
+                    body.classList.add("dark");
+                    themeToggle.textContent = "☀️ Light mode";
+                } else {
+                    body.classList.remove("dark");
+                    themeToggle.textContent = "🌙 Dark mode";
+                }
+            }
+
+            const savedTheme = localStorage.getItem(THEME_KEY) || "light";
+            applyTheme(savedTheme);
+
+            themeToggle.addEventListener("click", () => {
+                const newTheme = body.classList.contains("dark") ? "light" : "dark";
+                localStorage.setItem(THEME_KEY, newTheme);
+                applyTheme(newTheme);
+            });
+
+            // --- Show / hide password ---
+            pwToggle.addEventListener("click", () => {
+                const isHidden = pwInput.type === "password";
+                pwInput.type = isHidden ? "text" : "password";
+                pwToggle.textContent = isHidden ? "🙈 Hide" : "👁 Show";
+            });
+        });
+    </script>
 </body>
 </html>
-
-        
-
-
-
-
